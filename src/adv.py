@@ -6,10 +6,10 @@ import random
 
 # Declare all items
 item ={
-    'sword': Weapon("Sword", """You spot a sword in an ornate scabbard, though covered in dust, some light escapes from it""", 20),
-    'knife': Weapon("Knife", "You see a knife on the ground. It's serrated edges promise cutting pain", 10),
-    'potion': Potion("Healing_potion", "Someone left a valuable healing potion here. Drinking this restores 10 health", 10,),
-    'gold': Item("gold_coins", "What luck! You find a small pouch of 10 gold coins")
+    'sword': Weapon("Sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
+    'knife': Weapon("Knife", "Made of some unknown black metal. It's serrated edges promise cutting pain", 10),
+    'potion': Potion("Healing_potion", "Drinking this magic potion restores 10 health", 10,),
+    'gold': Item("gold_coins", "A small pouch with 10 gold coins")
 }
 # for i in item:
 #     print('xxxxxxxxxx',item[i])
@@ -74,9 +74,9 @@ while True:
         print("\u001b[33mSadly you see no valuable items you can pickup from this room.")
     else:
         for t in player.room.treasure:
-            print("\u001b[33m",t)    
+            print("\u001b[33m You find treasure.",t)    
 # * Waits for user input and decides what to do.
-    move = input("type \u001b[35m[i]\u001b[0m or \u001b[35m[inventory]\u001b[0m to Check Inventory \u001b[35m[t]\u001b[0m to Search room\n\u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[q]\u001b[0m Quit:\n").lower()
+    move = input("type \u001b[35m[i]\u001b[0m or \u001b[35m[inventory]\u001b[0m to Check Inventory \u001b[35m[take (item-name)]\u001b[0m to Pick up an item\n\u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[q]\u001b[0m Quit:\n").lower()
 
 # Print an error message if the movement isn't allowed.
     def wall():
@@ -95,7 +95,7 @@ while True:
             if found == False:
                 print("Invalid, item does not exist!")   
             else:
-                found = False          w
+                found = False          
 
 # If the user enters "q", quit the game.
     elif move == 'q':
