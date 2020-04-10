@@ -6,11 +6,13 @@ import random
 
 # Declare all items
 item ={
-    'sword': Weapon("Vorpal", "An exceptionally sharp, magical sword", 20),
-    'knife': Weapon("Knife of biting", "It's edges promise cutting pain", 10),
-    'potion': Potion("Healing potion", "Restores 10 health", 10,),
-    'gold': Item("gold coins", "A small pouch of 10 gold pieces")
+    'sword': Weapon("Sword", """You spot a sword in an ornate scabbard, though covered in dust, some light escapes for it""", 20),
+    'knife': Weapon("Knife", "You see a knife on the ground. It's serated edges promise cutting pain", 10),
+    'potion': Potion("Healing_potion", "Someone left a valuable potion healing potion here. Drinking this magic Restores 10 health", 10,),
+    'gold': Item("gold_coins", "What luck! You find a small pouch of 10 gold coins")
 }
+# for i in item:
+#     print('xxxxxxxxxx',item[i])
 
 # Declare all the rooms
 room = {
@@ -37,6 +39,8 @@ room['foyer'].add_item(item['sword'])
 room['narrow'].add_item(item['potion'])
 room['narrow'].add_item(item['gold'])
 
+
+
 # Link rooms together
 
 room['outside'].n_to = room['foyer']
@@ -54,28 +58,47 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 player = Player(room['outside'], 100, 10)
+# player.pick_up(str(item['gold']))
+# player.drop(str(item['gold']))
+# print('PLLLAAAYER',str(player))
 # print(f"Current player: {player.room.name,player.health,player.attack}")
 # Write a loop that:
 while True:
     #
     # * Prints the current room name
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    print(f"Current Room: {player.room.name}")
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    # print(" f'Current Room: \033[1;32;40m{player.room.name}' \u001b[37m \n")
+    print(f"\u001b[32mCurrent Room: {player.room.name}")
 # * Prints the current description (the textwrap module might be useful here).
-    print(f"{player.room.description}")
+    print(f"{player.room.description}\u001b[0m")
     if player.room.treasure == []:
-        print("Sadly you see no valuable items you can pickup from this room.")
+        print("\u001b[33mSadly you see no valuable items you can pickup from this room.")
     else:
-        print(player.room.treasure)    
+        for t in player.room.treasure:
+            print("\u001b[33m",t)    
 # * Waits for user input and decides what to do.
-    move = input("type [i] or 'inventory' to Check Inventory [t] to Search room\n[w] North [s] South [a] East [d] West [q] Quit:\n").lower()
+    move = input("type \u001b[35m[i]\u001b[0m or \u001b[35m[inventory]\u001b[0m to Check Inventory \u001b[35m[t]\u001b[0m to Search room\n\u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[q]\u001b[0m Quit:\n").lower()
 
 # Print an error message if the movement isn't allowed.
     def wall():
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n      Can't move there, something blocks your way!\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("\u001b[31m========================================================\n      Can't move there, something blocks your way!\n========================================================\u001b[0m")
+   
+    if len(move.split()) == 2:
+        action_handler = move.split()
+        if action_handler[0] == 'take':
+            target_item = action_handler[1]
+            found=False
+            for i in player.room.treasure:
+                if i.name.lower() == target_item.lower():
+                    found = True
+                    player.pick_up(i)
+                    player.room.remove_item(i)
+            if found == False:
+                print("Invalid, item does not exist!")   
+            else:
+                found = False          
+
 # If the user enters "q", quit the game.
-    if move == 'q':
+    elif move == 'q':
         break
 # If the user enters a cardinal direction, attempt to move to the room there.
     elif move == 'w':
@@ -99,10 +122,8 @@ while True:
         else:
             wall()
     elif move == 'i' or 'inventory':
-        print(f"Inventory: {player.inventory}")
-    # elif move == 't':
-    #     print(f"treasure: {player.room.treasure}")   
-    #     print("testing from t") 
-             
+        # print(f"\u001b[33mInventory: {player.inventory}\u001b[0m")
+        for z in player.inventory:
+            print("\u001b[33m",z)             
     else:
         print("Invalid movement. Press W for North, S for South, A for West, D for East or Q to Quit game")

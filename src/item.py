@@ -21,7 +21,8 @@ class Weapon(Item):
         super().__init__(name,description)
         self.damage = damage
     def __str__(self):
-        return('{self.name}, {self.description}, {self.damage}').format(self=self)    
+        return(f'{self.name}, {self.description}, {self.damage}')    
+        # return('testing')
 
 
 

@@ -20,5 +20,8 @@ class Player():
         print("You dropped the item") #remove item to player inventory and add it to room treasure
     def use():
         pass    
+
+    def __str__(self):
+        return ('{self.room},{self.health},{self.attack},{self.inventory}'.format(self=self))
    
    

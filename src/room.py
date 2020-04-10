@@ -17,7 +17,10 @@ class Room():
     def add_item(self,item):
         self.treasure.append(item)
     def remove_item(self,item):
-        self.treasure.remove(item)    
+        self.treasure.remove(item)   
+    def __str__(self):
+        return(f'{self.name},{self.description},{self.treasure}')    
+    
 
 
 
