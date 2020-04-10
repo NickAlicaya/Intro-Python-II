@@ -6,9 +6,9 @@ import random
 
 # Declare all items
 item ={
-    'sword': Weapon("Sword", """You spot a sword in an ornate scabbard, though covered in dust, some light escapes for it""", 20),
-    'knife': Weapon("Knife", "You see a knife on the ground. It's serated edges promise cutting pain", 10),
-    'potion': Potion("Healing_potion", "Someone left a valuable potion healing potion here. Drinking this magic Restores 10 health", 10,),
+    'sword': Weapon("Sword", """You spot a sword in an ornate scabbard, though covered in dust, some light escapes from it""", 20),
+    'knife': Weapon("Knife", "You see a knife on the ground. It's serrated edges promise cutting pain", 10),
+    'potion': Potion("Healing_potion", "Someone left a valuable healing potion here. Drinking this restores 10 health", 10,),
     'gold': Item("gold_coins", "What luck! You find a small pouch of 10 gold coins")
 }
 # for i in item:
@@ -95,7 +95,7 @@ while True:
             if found == False:
                 print("Invalid, item does not exist!")   
             else:
-                found = False          
+                found = False          w
 
 # If the user enters "q", quit the game.
     elif move == 'q':
