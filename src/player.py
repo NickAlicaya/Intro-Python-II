@@ -9,4 +9,16 @@ class Player():
         self.room = room
         self.health = health
         self.attack = attack
-        self.inventory = []
+        self.inventory = [] if inventory is None else inventory
+
+    def pick_up(self,item):
+        self.inventory.append(item)
+        print("You picked-up the item")  #add item to player inventory and remove it from room treasure
+
+    def drop(self,item):
+        self.inventory.remove(item)
+        print("You dropped the item") #remove item to player inventory and add it to room treasure
+    def use():
+        pass    
+   
+   

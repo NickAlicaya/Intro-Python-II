@@ -5,11 +5,20 @@
 class Room():
     '''docstring for Room'''
 
-    def __init__(self, name, description, treasure=None, n_to=None, s_to=None, e_to=None, w_to=None):
+    def __init__(self, name, description, treasure=None):
         self.name = name
         self.description = description
-        self.treasure = []
-        self.n_to = n_to
-        self.s_to = s_to
-        self.e_to = e_to
-        self.w_to = w_to
+        self.treasure = [] if treasure is None else treasure
+        self.n_to = None
+        self.s_to = None
+        self.e_to = None
+        self.w_to = None
+
+    def add_item(self,item):
+        self.treasure.append(item)
+    def remove_item(self,item):
+        self.treasure.remove(item)    
+
+
+
+
