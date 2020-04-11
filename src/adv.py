@@ -84,7 +84,7 @@ while True:
    
     if len(move.split()) == 2:
         action_handler = move.split()
-        if action_handler[0] == 'take':
+        if action_handler[0] == 'take' or action_handler[0] == 'get':
             target_item = action_handler[1]
             found=False
             for i in player.room.treasure:
@@ -96,7 +96,18 @@ while True:
                 print("Invalid, item does not exist!")   
             else:
                 found = False          
-
+        elif action_handler[0] == 'drop' or action_handler[0] == 'remove':
+            target_item = action_handler[1]
+            found=False
+            for junk in player.inventory:
+                if junk.name.lower() == target_item.lower():
+                    found = True
+                    player.drop(junk)
+                    player.room.add_item(junk)
+            if found == False:
+                print("Invalid, item does not exist!")  
+            else:
+                found = False            
 # If the user enters "q", quit the game.
     elif move == 'q':
         break
@@ -124,6 +135,6 @@ while True:
     elif move == 'i' or 'inventory':
         # print(f"\u001b[33mInventory: {player.inventory}\u001b[0m")
         for z in player.inventory:
-            print("\u001b[33m",z)             
+            print("\u001b[33m INVENTORY:",z.name)                     
     else:
         print("Invalid movement. Press W for North, S for South, A for West, D for East or Q to Quit game")
