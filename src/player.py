@@ -20,7 +20,6 @@ class Player():
         print("You dropped the item") #remove item to player inventory and add it to room treasure
     def equip_wpn(self,item):
         self.weapon_on = item
-        print('WPN ON:',self.weapon_on)
         e_item = item
         print('You equip:',e_item)    
     def unequip_wpn(self,item):
