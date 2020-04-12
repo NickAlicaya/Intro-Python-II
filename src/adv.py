@@ -1,18 +1,18 @@
 from room import Room
 from player import Player
-from item import Item,Weapon,Potion
+from item import *
 import random
 
 
 # Declare all items
 item ={
-    'sword': Weapon("Sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
+    'sword': Weapon("sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
     'knife': Weapon("Knife", "Made of some unknown black metal. It's serrated edges promise cutting pain", 10),
     'potion': Potion("Healing_potion", "Drinking this magic potion restores 10 health", 10,),
     'gold': Item("gold_coins", "A small pouch with 10 gold coins")
 }
-# for i in item:
-#     print('xxxxxxxxxx',item[i])
+for i in item:
+    print('xxxxxxxxxx',item[i])
 
 # Declare all the rooms
 room = {
@@ -95,19 +95,48 @@ while True:
             if found == False:
                 print("Invalid, item does not exist!")   
             else:
-                found = False          
-        elif action_handler[0] == 'drop' or action_handler[0] == 'remove':
+                found = False      
+
+        elif action_handler[0] == 'equip':
             target_item = action_handler[1]
             found=False
-            for junk in player.inventory:
-                if junk.name.lower() == target_item.lower():
+            for w in player.inventory:
+                if w.name.lower() == target_item.lower(): 
                     found = True
-                    player.drop(junk)
-                    player.room.add_item(junk)
+                    player.equip_wpn(w)
             if found == False:
                 print("Invalid, item does not exist!")  
             else:
-                found = False            
+                found = False     
+
+        elif action_handler[0] == 'unequip':
+            target_item = action_handler[1]
+            found=False
+            for w in player.inventory:
+                if w.name.lower() == target_item.lower(): 
+                    found = True
+                    player.unequip_wpn(w)
+            if found == False:
+                print("Invalid, item does not exist!")  
+            else:
+                found = False  
+
+        elif action_handler[0] == 'drop' or action_handler[0] == 'remove':
+            target_item = action_handler[1]
+            found=False
+            if player.weapon_on == None or player.weapon_on.name.lower() !=  target_item.lower():
+                for junk in player.inventory:
+                    if junk.name.lower() == target_item.lower():
+                        found = True
+                        player.drop(junk)
+                        player.room.add_item(junk)
+                    if found == False:
+                        print("Invalid, item does not exist!")  
+                    else:
+                        found = False   
+            else:
+                print('Unequip weapon before dropping')
+                       
 # If the user enters "q", quit the game.
     elif move == 'q':
         break
@@ -132,6 +161,8 @@ while True:
             player.room = player.room.w_to
         else:
             wall()
+    elif move == 'status':
+        print("\u001b[31m",player,"\u001b[0m")        
     elif move == 'i' or 'inventory':
         # print(f"\u001b[33mInventory: {player.inventory}\u001b[0m")
         for z in player.inventory:

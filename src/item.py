@@ -14,6 +14,15 @@ class Potion(Item):
         super().__init__(name,description)
         self.heal = heal
 
+# class Trinket(Item):
+#     '''docstring for Trinket Item subclass'''
+
+#     def __init__(self,name,description):
+#         super().__init__(name,description)
+#         self.effect = effect  
+#     def __str__(self):
+#         return('{self.name}, {self.description}').format(self=self)        
+
 class Weapon(Item):
     '''docstring for Weapon Item subclass'''
 
