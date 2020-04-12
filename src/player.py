@@ -30,7 +30,7 @@ class Player():
     def use_potion(self,item):
         self.health = self.health + item.heal
         self.inventory.remove(item)
-        print('You used a healing potion')
+        print('You used a healing potion.Regained ',item.heal,'health.')
     def __str__(self):
         return ('{self.room},{self.health},{self.attack},{self.inventory}, {self.weapon_on}'.format(self=self))
    

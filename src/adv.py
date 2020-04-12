@@ -39,7 +39,7 @@ def battleState():
     enemy = selectEnemy()
     print('\u001b[31mYou encounter a wild', enemy.name,'\u001b[0m')
     while enemy.health > 0:
-        choice = input('1.Attack\n2.Use item\n3.RUN!')
+        choice = input('1.Attack\n2.Use item\n3.Check player status\n4.RUN!')
         if choice == '1':
             print('You swing your weapon at',enemy.name)
             hitchance = random.randint(0,50)
@@ -73,7 +73,7 @@ def battleState():
                 else:
                     print("\u001b[31mYou searched but couldn't find that item. You lose a turn.\u001b[0m")
                    
-        elif choice == '3':
+        elif choice == '4':
             e_hitchance = random.randint(0,10)
             if e_hitchance > 4:
                 player.health = player.health-enemy.damage
@@ -87,6 +87,33 @@ def battleState():
             else: 
                 print('You live to fight another day.')   
                 break      
+        elif choice == '3':
+            e_hitchance = random.randint(0,10)
+            if player.inventory == None or player.inventory == []:
+                print('Health: ',player.health,'Equipped weapon: ',player.weapon_on, 'Your inventory is empty')
+                if e_hitchance > 4:
+                    player.health = player.health-enemy.damage
+                    print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"\u001b[0m.")
+                    if player.health < 1:
+                        youDied()
+                    else:
+                        print('Stop wasting time and concentrate if you want to survive.')
+                else: 
+                    print("\u001b[31m",enemy.name,'attempts to strike you while you were idle but missed.',"\u001b[0m")   
+
+            else:
+                for x in player.inventory:
+                    print('You pause and check your current condition','Health:',player.health,'Equipped weapon: ',player.weapon_on,'Inventory: ',x.name,'You lose a turn.')
+                    if e_hitchance > 4:
+                        player.health = player.health-enemy.damage
+                        print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"\u001b[0m.")
+                        if player.health < 1:
+                            youDied()
+                        else:
+                            print('Stop wasting time and concentrate if you want to survive.')
+                    else: 
+                        print(enemy.name,'attempts to strike you while you were idle but missed.')   
+                      
         elif choice == 'q':
             break
         else:
@@ -104,10 +131,13 @@ item ={
 # Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),            
+                     "North of you, the cave mount beckons"), 
+    'trap':  Room("Trap room",
+                     "You walked into a room of traps. Bolts of arrow hit you. The only way out is to go back to the passage east"),            
+                            
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north, east and west."""),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
@@ -140,6 +170,8 @@ room['outside'].n_to = room['foyer']
 room['foyer'].s_to = room['outside']
 room['foyer'].n_to = room['overlook']
 room['foyer'].e_to = room['narrow']
+room['foyer'].w_to = room['trap']
+room['trap'].e_to = room['foyer']
 room['overlook'].s_to = room['foyer']
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
@@ -153,8 +185,10 @@ room['treasure'].s_to = room['narrow']
 player = Player(room['outside'], 100, 10)
 # player.inventory.append(trz)
 
-battleState()
+# battleState()
 while player.health > 0:
+    if player.room == room['trap']:
+        player.health = player.health -20
     encounter = random.randint(0,10)
     # * Prints the current room name
     # print(" f'Current Room: \033[1;32;40m{player.room.name}' \u001b[37m \n")
@@ -162,12 +196,12 @@ while player.health > 0:
 # * Prints the current description (the textwrap module might be useful here).
     print(f"{player.room.description}\u001b[0m")
     if player.room.treasure == []:
-        print("\u001b[33mSadly you see no valuable items you can pickup from this room.")
+        print("\u001b[33mYou see nothing of in this room.")
     else:
         for t in player.room.treasure:
             print("\u001b[33m You find treasure.",t)    
 # * Waits for user input and decides what to do.
-    move = input("type \u001b[35m[i]\u001b[0m or \u001b[35m[inventory]\u001b[0m to Check Inventory \u001b[35m[take (item-name)]\u001b[0m to Pick up an item\n\u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[q]\u001b[0m Quit:\n").lower()
+    move = input("type \u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[c]\u001b[0m check available commands \u001b[35m[q]\u001b[0m Quit:\n").lower()
 
 # Print an error message if the movement isn't allowed.
     def wall():
@@ -239,10 +273,27 @@ while player.health > 0:
                         found = False   
             else:
                 print('Unequip weapon before dropping')
+
+        elif action_handler[0] == 'drink' or action_handler[0] == 'use':
+            target_item = action_handler[1]
+            found=False
+            for p in player.inventory:
+                if p.name.lower() == target_item.lower():
+                    found = True
+                    player.use_potion(p)
+                if found == False:
+                    print("Invalid, item does not exist!")  
+                else:
+                    found = False   
+               
                        
 # If the user enters "q", quit the game.
     elif move == 'q':
         break
+
+    elif move == 'c':
+        print("Available commands: ","\n\u001b[35m[i]\u001b[0m or \u001b[35m[inventory]\u001b[0m to Check Inventory\n\u001b[35m[take (item-name)]\u001b[0m to Pick up an item\n\u001b[35m[drink (potion-name)]\u001b[0m to drink a potion\n\u001b[35m[status]\u001b[0m to check player status")
+
 # If the user enters a cardinal direction, attempt to move to the room there.
     elif move == 'w':
         if player.room.n_to != None:
@@ -290,7 +341,8 @@ while player.health > 0:
                 print('You encounter a random monster!')
                 battleState()
     elif move == 'status':
-        print("\u001b[31m",player,"\u001b[0m")        
+        for s in player.inventory:
+            print("\u001b[31m",'Health: ', player.health, 'Inventory: ',s,'Equipped weapon:',player.weapon_on,"\u001b[0m")        
     elif move == 'i' or 'inventory':
         if player.inventory != []:
             for z in player.inventory:
