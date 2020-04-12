@@ -39,21 +39,21 @@ def battleState():
     enemy = selectEnemy()
     print('\u001b[31mYou encounter a wild', enemy.name,'\u001b[0m')
     while enemy.health > 0:
-        choice = input('1.Attack\n2.Use item\n3.Check player status\n4.RUN!')
+        choice = input('\u001b[34mActions:\n1.Attack\n2.Use item\n3.Check player status\n4.RUN!\u001b[0m')
         if choice == '1':
             print('You swing your weapon at',enemy.name)
             hitchance = random.randint(0,50)
             if hitchance > 3:
                 e_dmg = random.randint(1,player.attack)
                 enemy.health = enemy.health-e_dmg 
-                print('You dealt',e_dmg,'to',enemy.name)     
+                print('You dealt',e_dmg,'damage to',enemy.name)     
                 print('Enemy has:',enemy.health,'life left')   
                 if enemy.health > 0:
                     e_hitchance = random.randint(0,10)
                     if e_hitchance > 4:
                         p_dmg=random.randint(1,enemy.damage)
                         player.health = player.health-p_dmg
-                        print("\u001b[31m",enemy.name,'strikes you and deals', p_dmg,"\u001b[0m")
+                        print("\u001b[31m",enemy.name,'strikes you and deals', p_dmg,"damage\u001b[0m")
                         if player.health < 1:
                             youDied()
                     else:
@@ -77,7 +77,7 @@ def battleState():
             e_hitchance = random.randint(0,10)
             if e_hitchance > 4:
                 player.health = player.health-enemy.damage
-                print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"but you manage to escape.\u001b[0m")
+                print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"damage but you manage to escape.\u001b[0m")
                 break
                 if player.health < 1:
                     youDied()
@@ -93,7 +93,7 @@ def battleState():
                 print('Health: ',player.health,'Equipped weapon: ',player.weapon_on, 'Your inventory is empty')
                 if e_hitchance > 4:
                     player.health = player.health-enemy.damage
-                    print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"\u001b[0m.")
+                    print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"damage\u001b[0m.")
                     if player.health < 1:
                         youDied()
                     else:
@@ -341,12 +341,14 @@ while player.health > 0:
                 print('You encounter a random monster!')
                 battleState()
     elif move == 'status':
+        print("\u001b[33m",'Health: ', player.health,'Equipped weapon:',player.weapon_on,'\n Inventory:',"\u001b[0m")   
         for s in player.inventory:
-            print("\u001b[31m",'Health: ', player.health, 'Inventory: ',s,'Equipped weapon:',player.weapon_on,"\u001b[0m")        
+            print("\u001b[33m",s,"\u001b[0m")      
     elif move == 'i' or 'inventory':
         if player.inventory != []:
+            print("\u001b[33m INVENTORY:")
             for z in player.inventory:
-                print("\u001b[33m INVENTORY:",z.name)   
+                print("\u001b[33m", z.name)   
         else:
             print("\u001b[33m Your Bag is Empty.")                         
     else:
