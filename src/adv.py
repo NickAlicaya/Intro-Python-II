@@ -19,11 +19,14 @@ def loot():
 monsters = [
     Monster('troll', 80,12,.3),
     Monster('bat',40,8,.2),
-    Monster('goblin',50,10,.2)
+    Monster('goblin',50,10,.2),
+    Monster('orc', 60,10,.3),
+    Monster('giant spider', 60,12,.3),
+    Monster('young dragon', 160,30,.5)
 ]
 
 def selectEnemy():
-    chance = random.randint(0,2)
+    chance = random.randint(0,4)
     enemy = monsters[chance]
     return enemy
 def youDied():
@@ -34,7 +37,7 @@ selectEnemy()
 
 def battleState():
     enemy = selectEnemy()
-    print('You encounter a wild', enemy)
+    print('\u001b[31mYou encounter a wild', enemy.name,'\u001b[0m')
     while enemy.health > 0:
         choice = input('1.Attack\n2.Use item\n3.RUN!')
         if choice == '1':
@@ -54,21 +57,36 @@ def battleState():
                         if player.health < 1:
                             youDied()
                     else:
-                        print(enemy.name, 'attacks but you dodged the attack.')     
+                        print(enemy.name, 'attacks but you dodged the attack.')  
+
+                else:
+                    print('You defeated',enemy.name)
+                    reward()           
             else:    
                 print('You missed')
         elif choice == '2':
-            pass
+           for option in player.inventory:
+                use = input('Which potion do you want to use?').lower()
+                if use == option.name.lower():
+                    target_potion = option
+                    player.use_potion(target_potion)    
+                else:
+                    print("\u001b[31mYou searched but couldn't find that item. You lose a turn.\u001b[0m")
+                   
         elif choice == '3':
             e_hitchance = random.randint(0,10)
             if e_hitchance > 4:
                 player.health = player.health-enemy.damage
-                print(enemy.name,'strikes you and deals', enemy.damage)
+                print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"but you manage to escape.\u001b[0m")
+                break
                 if player.health < 1:
                     youDied()
                 else:
                     print('You ran and escaped to live another day.')
-                    break        
+                    break  
+            else: 
+                print('You live to fight another day.')   
+                break      
         elif choice == 'q':
             break
         else:
@@ -79,7 +97,7 @@ def battleState():
 item ={
     'sword': Weapon("Sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
     'knife': Weapon("Knife", "Made of some unknown black metal. It's serrated edges promise cutting pain", 10),
-    'potion': Potion("Healing_potion", "Drinking this magic potion restores 10 health", 10,),
+    'potion': Potion("Healing_potion", "Drinking this magic potion restores 10 health", 40,),
     'gold': Item("gold_coins", "A small pouch with 10 gold coins")
 }
 
@@ -109,7 +127,12 @@ room['foyer'].add_item(item['potion'])
 room['narrow'].add_item(item['potion'])
 room['narrow'].add_item(item['gold'])
 
-
+def reward():
+    z=random.randint(0,1)
+    if z == 0:
+        player.room.add_item(item['potion'])
+    if z == 1:    
+        player.room.add_item(item['gold'])
 
 # Link rooms together
 
