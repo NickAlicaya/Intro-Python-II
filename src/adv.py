@@ -1,23 +1,92 @@
 from room import Room
 from player import Player
 from item import *
+from enemies import *
 import random
+
+loot=[
+    Weapon("Sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
+    Weapon("Knife", "Made of some unknown black metal. It's serrated edges promise cutting pain", 10),Potion("Healing_potion", "Drinking this magic potion restores 10 health", 10,),
+    Item("gold_coins", "A small pouch with 10 gold coins")
+    ]
+
+def loot(): 
+    lootChance = random.randint(0,3)
+    lootDrop = loot[lootChance]
+    return lootDrop
+
+#Create Monsters
+monsters = [
+    Monster('troll', 80,12,.3),
+    Monster('bat',40,8,.2),
+    Monster('goblin',50,10,.2)
+]
+
+def selectEnemy():
+    chance = random.randint(0,2)
+    enemy = monsters[chance]
+    return enemy
+def youDied():
+    print('\u001b[31mYou have died. Thank you for playing\u001b[0m')
+    exit()
+
+selectEnemy()
+
+def battleState():
+    enemy = selectEnemy()
+    print('You encounter a wild', enemy)
+    while enemy.health > 0:
+        choice = input('1.Attack\n2.Use item\n3.RUN!')
+        if choice == '1':
+            print('You swing your weapon at',enemy.name)
+            hitchance = random.randint(0,50)
+            if hitchance > 3:
+                e_dmg = random.randint(1,player.attack)
+                enemy.health = enemy.health-e_dmg 
+                print('You dealt',e_dmg,'to',enemy.name)     
+                print('Enemy has:',enemy.health,'life left')   
+                if enemy.health > 0:
+                    e_hitchance = random.randint(0,10)
+                    if e_hitchance > 4:
+                        p_dmg=random.randint(1,enemy.damage)
+                        player.health = player.health-p_dmg
+                        print("\u001b[31m",enemy.name,'strikes you and deals', p_dmg,"\u001b[0m")
+                        if player.health < 1:
+                            youDied()
+                    else:
+                        print(enemy.name, 'attacks but you dodged the attack.')     
+            else:    
+                print('You missed')
+        elif choice == '2':
+            pass
+        elif choice == '3':
+            e_hitchance = random.randint(0,10)
+            if e_hitchance > 4:
+                player.health = player.health-enemy.damage
+                print(enemy.name,'strikes you and deals', enemy.damage)
+                if player.health < 1:
+                    youDied()
+                else:
+                    print('You ran and escaped to live another day.')
+                    break        
+        elif choice == 'q':
+            break
+        else:
+            print('Invalid input, type 1, 2 or 3 to make a choice')
 
 
 # Declare all items
 item ={
-    'sword': Weapon("sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
+    'sword': Weapon("Sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
     'knife': Weapon("Knife", "Made of some unknown black metal. It's serrated edges promise cutting pain", 10),
     'potion': Potion("Healing_potion", "Drinking this magic potion restores 10 health", 10,),
     'gold': Item("gold_coins", "A small pouch with 10 gold coins")
 }
-for i in item:
-    print('xxxxxxxxxx',item[i])
 
 # Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons"),            
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -36,6 +105,7 @@ earlier adventurers. The only exit is to the south."""),
 
 # Add treasure to room
 room['foyer'].add_item(item['sword'])
+room['foyer'].add_item(item['potion'])
 room['narrow'].add_item(item['potion'])
 room['narrow'].add_item(item['gold'])
 
@@ -58,13 +128,11 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 player = Player(room['outside'], 100, 10)
-# player.pick_up(str(item['gold']))
-# player.drop(str(item['gold']))
-# print('PLLLAAAYER',str(player))
-# print(f"Current player: {player.room.name,player.health,player.attack}")
-# Write a loop that:
-while True:
-    #
+# player.inventory.append(trz)
+
+battleState()
+while player.health > 0:
+    encounter = random.randint(0,10)
     # * Prints the current room name
     # print(" f'Current Room: \033[1;32;40m{player.room.name}' \u001b[37m \n")
     print(f"\u001b[32mCurrent Room: {player.room.name}")
@@ -96,6 +164,18 @@ while True:
                 print("Invalid, item does not exist!")   
             else:
                 found = False      
+
+        elif action_handler[0] == 'drink':
+            target_item = action_handler[1]
+            found=False
+            for pot in player.inventory:
+                if pot.name.lower() == target_item.lower(): 
+                    found = True
+                    player.use_potion(pot)
+            if found == False:
+                print("Invalid, item does not exist!")  
+            else:
+                found = False
 
         elif action_handler[0] == 'equip':
             target_item = action_handler[1]
@@ -144,28 +224,55 @@ while True:
     elif move == 'w':
         if player.room.n_to != None:
             player.room = player.room.n_to
+            encounter = random.randint(0,10)
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
         else:
             wall()
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
     elif move == 's':
         if player.room.s_to != None:
             player.room = player.room.s_to
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
         else:
             wall()
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
     elif move == 'd':
         if player.room.e_to != None:
             player.room = player.room.e_to
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
         else:
             wall()
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
     elif move == 'a':
         if player.room.w_to != None:
             player.room = player.room.w_to
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
         else:
             wall()
+            if encounter > 6:
+                print('You encounter a random monster!')
+                battleState()
     elif move == 'status':
         print("\u001b[31m",player,"\u001b[0m")        
     elif move == 'i' or 'inventory':
-        # print(f"\u001b[33mInventory: {player.inventory}\u001b[0m")
-        for z in player.inventory:
-            print("\u001b[33m INVENTORY:",z.name)                     
+        if player.inventory != []:
+            for z in player.inventory:
+                print("\u001b[33m INVENTORY:",z.name)   
+        else:
+            print("\u001b[33m Your Bag is Empty.")                         
     else:
-        print("Invalid movement. Press W for North, S for South, A for West, D for East or Q to Quit game")
+        print("\u001b[31mInvalid movement. Press W for North, S for South, A for West, D for East or Q to Quit game\u001b[0m")
