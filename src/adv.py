@@ -17,16 +17,18 @@ def loot():
 
 #Create Monsters
 monsters = [
-    Monster('troll', 80,12,.3),
-    Monster('bat',40,8,.2),
-    Monster('goblin',50,10,.2),
-    Monster('orc', 60,10,.3),
-    Monster('giant spider', 60,12,.3),
-    Monster('young dragon', 160,30,.5)
+    Monster('troll', 80,12,350,1),
+    Monster('bat',40,8,200,1),
+    Monster('goblin',50,10,250,1),
+    Monster('orc', 60,10,350,1),
+    Monster('giant spider', 60,12,250,1),
+    Monster('wyvern', 160,30,750,1),
+    Monster('drow', 100,25,400,1),
+    Monster('manticore', 130,26,500,1)
 ]
 
 def selectEnemy():
-    chance = random.randint(0,4)
+    chance = random.randint(0,7)
     enemy = monsters[chance]
     return enemy
 def youDied():
@@ -44,14 +46,14 @@ def battleState():
             print('You swing your weapon at',enemy.name)
             hitchance = random.randint(0,50)
             if hitchance > 3:
-                e_dmg = random.randint(1,player.attack)
+                e_dmg = int((random.randint(1,player.attack))*(1+player.lvl/5))
                 enemy.health = enemy.health-e_dmg 
                 print('You dealt',e_dmg,'damage to',enemy.name)     
                 print('Enemy has:',enemy.health,'life left')   
                 if enemy.health > 0:
                     e_hitchance = random.randint(0,10)
                     if e_hitchance > 4:
-                        p_dmg=random.randint(1,enemy.damage)
+                        p_dmg=int((random.randint(1,enemy.damage))*(1+enemy.lvl/5))
                         player.health = player.health-p_dmg
                         print("\u001b[31m",enemy.name,'strikes you and deals', p_dmg,"damage\u001b[0m")
                         if player.health < 1:
@@ -61,6 +63,9 @@ def battleState():
 
                 else:
                     print('You defeated',enemy.name)
+                    player.exp = player.exp+enemy.exp
+                    print('You gained',enemy.exp,)
+                    player.lvl = player.exp//1000
                     reward()           
             else:    
                 print('You missed')
@@ -105,7 +110,7 @@ def battleState():
                 for x in player.inventory:
                     print('You pause and check your current condition','Health:',player.health,'Equipped weapon: ',player.weapon_on,'Inventory: ',x.name,'You lose a turn.')
                     if e_hitchance > 4:
-                        player.health = player.health-enemy.damage
+                        player.health = player.health-(enemy.damage*(1+enemy.lvl/10))
                         print("\u001b[31m",enemy.name,'strikes you and deals', enemy.damage,"\u001b[0m.")
                         if player.health < 1:
                             youDied()
@@ -124,8 +129,11 @@ def battleState():
 item ={
     'sword': Weapon("Sword", """Sheathed an ornate scabbard, though covered in dust, some light escapes from it""", 20),
     'knife': Weapon("Knife", "Made of some unknown black metal. It's serrated edges promise cutting pain", 10),
-    'potion': Potion("Healing_potion", "Drinking this magic potion restores 10 health", 40,),
-    'gold': Item("gold_coins", "A small pouch with 10 gold coins")
+    'potion': Potion("Healing_potion", "Drinking this magic potion restores 40 health", 40,),
+    'gold': Item("gold_coins", "A small pouch with 10 gold coins"),
+    'potion2': Potion("Healing_potion2", "Drinking this magic potion restores 80 health", 80,),
+    'mace': Weapon("Mace+1", """A magical mace """, 20),
+    'key': Item("rusty_key", "Looks like this might be useful for something later."),
 }
 
 # Declare all the rooms
@@ -158,11 +166,21 @@ room['narrow'].add_item(item['potion'])
 room['narrow'].add_item(item['gold'])
 
 def reward():
-    z=random.randint(0,1)
+    z=random.randint(0,7)
     if z == 0:
+        pass
+    elif z == 1:
         player.room.add_item(item['potion'])
-    if z == 1:    
-        player.room.add_item(item['gold'])
+    elif z == 2:
+        player.room.add_item(item['knife'])    
+    elif z == 3:
+        player.room.add_item(item['gold']) 
+    elif z == 4:
+        player.room.add_item(item['mace'])  
+    elif z == 5:
+        player.room.add_item(item['potion2'])  
+    elif z == 6:
+        player.room.add_item(item['key'])                           
 
 # Link rooms together
 
@@ -201,7 +219,7 @@ while player.health > 0:
         for t in player.room.treasure:
             print("\u001b[33m You find treasure.",t)    
 # * Waits for user input and decides what to do.
-    move = input("type \u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[c]\u001b[0m check available commands \u001b[35m[q]\u001b[0m Quit:\n").lower()
+    move = input("type \u001b[35m[w]\u001b[0m North \u001b[35m[s]\u001b[0m South \u001b[35m[a]\u001b[0m East \u001b[35m[d]\u001b[0m West \u001b[35m[r]\u001b[0m Rest \u001b[35m[c]\u001b[0m available commands \u001b[35m[q]\u001b[0m Quit:\n").lower()
 
 # Print an error message if the movement isn't allowed.
     def wall():
@@ -290,6 +308,9 @@ while player.health > 0:
 # If the user enters "q", quit the game.
     elif move == 'q':
         break
+    elif move == 'r' or move == 'rest':
+        player.health = 100
+        player.health = ((player.health)*(1+(player.lvl//4)))
 
     elif move == 'c':
         print("Available commands: ","\n\u001b[35m[i]\u001b[0m or \u001b[35m[inventory]\u001b[0m to Check Inventory\n\u001b[35m[take (item-name)]\u001b[0m to Pick up an item\n\u001b[35m[drink (potion-name)]\u001b[0m to drink a potion\n\u001b[35m[status]\u001b[0m to check player status")
@@ -341,7 +362,7 @@ while player.health > 0:
                 print('You encounter a random monster!')
                 battleState()
     elif move == 'status':
-        print("\u001b[33m",'Health: ', player.health,'Equipped weapon:',player.weapon_on,'\n Inventory:',"\u001b[0m")   
+        print("\u001b[33m",'Health: ', player.health,'Equipped weapon:',player.weapon_on,'Level:',player.lvl,'Exp:',player.exp,'\n Inventory:',"\u001b[0m")   
         for s in player.inventory:
             print("\u001b[33m",s,"\u001b[0m")      
     elif move == 'i' or 'inventory':

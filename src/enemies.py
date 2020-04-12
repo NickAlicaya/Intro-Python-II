@@ -1,11 +1,12 @@
 import random
 chance = random.randint(0,2)
 class Monster():
-    def __init__(self,name,health,damage,hit,loot=None):
+    def __init__(self,name,health,damage,exp,lvl=1,loot=None):
         self.name = name
         self.health = health
         self.damage = damage
-        self.hit = hit
+        self.exp = exp
+        self.lvl = lvl
         self.loot = [] if loot is None else loot
     def attack():
         pass 
