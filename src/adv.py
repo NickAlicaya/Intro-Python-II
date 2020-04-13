@@ -195,13 +195,8 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#
-# Main
-#
-
 # Make a new player object that is currently in the 'outside' room.
 player = Player(room['outside'], 100, 10)
-# player.inventory.append(trz)
 
 # battleState()
 while player.health > 0:
@@ -209,7 +204,6 @@ while player.health > 0:
         player.health = player.health -20
     encounter = random.randint(0,10)
     # * Prints the current room name
-    # print(" f'Current Room: \033[1;32;40m{player.room.name}' \u001b[37m \n")
     print(f"\u001b[32mCurrent Room: {player.room.name}")
 # * Prints the current description (the textwrap module might be useful here).
     print(f"{player.room.description}\u001b[0m")
